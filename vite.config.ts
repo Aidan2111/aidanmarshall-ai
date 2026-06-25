@@ -1,0 +1,14 @@
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vitest/config";
+
+const base = process.env.GITHUB_PAGES === "true" ? "/aidanmarshall-ai/" : "/";
+
+export default defineConfig({
+  base,
+  plugins: [react()],
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: "./src/test/setup.ts",
+  },
+});
