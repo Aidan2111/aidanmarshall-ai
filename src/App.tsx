@@ -207,6 +207,9 @@ function Section({
 
 function ShaderField() {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
+  const [rendererMode, setRendererMode] = React.useState<
+    "booting" | "webgpu" | "canvas" | "reduced"
+  >("booting");
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
@@ -215,7 +218,12 @@ function ShaderField() {
       typeof window.matchMedia === "function" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    if (!canvas || prefersReducedMotion) {
+    if (!canvas) {
+      return;
+    }
+
+    if (prefersReducedMotion) {
+      setRendererMode("reduced");
       return;
     }
 
@@ -232,12 +240,14 @@ function ShaderField() {
         if (cancelled) {
           webGpuCleanup();
         } else {
+          setRendererMode("webgpu");
           cleanup = webGpuCleanup;
         }
         return;
       }
 
       if (!cancelled) {
+        setRendererMode("canvas");
         cleanup = startCanvasFallback(canvas);
       }
     };
@@ -250,19 +260,50 @@ function ShaderField() {
     };
   }, []);
 
+  const rendererLabel = {
+    booting: "Booting GPU graph",
+    webgpu: "WebGPU active",
+    canvas: "Canvas fallback active",
+    reduced: "Motion reduced",
+  }[rendererMode];
+
   return (
     <div className="shader-shell">
       <canvas
         ref={canvasRef}
         aria-label="Performance-conscious WebGPU shader field"
-        data-renderer="webgpu-preferred"
+        data-renderer={
+          rendererMode === "webgpu"
+            ? "webgpu-active"
+            : rendererMode === "canvas"
+              ? "canvas-fallback"
+              : "webgpu-preferred"
+        }
+        data-renderer-state={rendererMode}
       />
+      <div className="shader-node-labels" aria-hidden="true">
+        <span className="node-label node-label-site">site</span>
+        <span className="node-label node-label-github">GitHub</span>
+        <span className="node-label node-label-linkedin">LinkedIn</span>
+        <span className="node-label node-label-work">PwC</span>
+        <span className="node-label node-label-writing">writing</span>
+      </div>
       <div className="shader-overlay">
-        <p className="tile-label">Live renderer</p>
-        <h2>WebGPU identity field</h2>
-        <p>
-          Low-amplitude mesh animation, 30 FPS cap, visibility pause, and reduced motion fallback.
+        <p className="renderer-status" aria-live="polite">
+          <span aria-hidden="true" />
+          {rendererLabel}
         </p>
+        <p className="tile-label">Live renderer</p>
+        <h2>Entity graph online</h2>
+        <p>
+          Page-load renderer connects the canonical site, GitHub, LinkedIn, work,
+          writing, and credentials as an animated entity graph.
+        </p>
+        <div className="shader-readout" aria-label="Renderer performance budget">
+          <span>30 FPS cap</span>
+          <span>visibility pause</span>
+          <span>low-power adapter</span>
+        </div>
       </div>
     </div>
   );
@@ -329,25 +370,137 @@ async function startWebGpuShader(
           return out;
         }
 
+        fn aspectUv(uv: vec2<f32>) -> vec2<f32> {
+          let aspect = uniforms.width / max(uniforms.height, 1.0);
+          return vec2<f32>((uv.x - 0.5) * aspect + 0.5, uv.y);
+        }
+
         fn lineGrid(value: f32, scale: f32) -> f32 {
           let grid = abs(fract(value * scale) - 0.5);
           return 1.0 - smoothstep(0.0, 0.035, grid);
         }
 
+        fn nodePosition(index: i32, t: f32) -> vec2<f32> {
+          let drift = vec2<f32>(
+            sin(t * 0.72 + f32(index) * 1.7),
+            cos(t * 0.54 + f32(index) * 1.1)
+          ) * 0.012;
+
+          if (index == 0) {
+            return vec2<f32>(0.50, 0.50) + drift;
+          }
+          if (index == 1) {
+            return vec2<f32>(0.25, 0.24) + drift;
+          }
+          if (index == 2) {
+            return vec2<f32>(0.76, 0.26) + drift;
+          }
+          if (index == 3) {
+            return vec2<f32>(0.24, 0.76) + drift;
+          }
+          if (index == 4) {
+            return vec2<f32>(0.78, 0.76) + drift;
+          }
+          return vec2<f32>(0.50, 0.86) + drift;
+        }
+
+        fn segmentDistance(p: vec2<f32>, a: vec2<f32>, b: vec2<f32>) -> f32 {
+          let pa = p - a;
+          let ba = b - a;
+          let h = clamp(dot(pa, ba) / max(dot(ba, ba), 0.0001), 0.0, 1.0);
+          return length(pa - ba * h);
+        }
+
+        fn linkField(
+          p: vec2<f32>,
+          a: vec2<f32>,
+          b: vec2<f32>,
+          reveal: f32,
+          t: f32,
+          offset: f32
+        ) -> vec2<f32> {
+          let distance = segmentDistance(p, a, b);
+          let line = (1.0 - smoothstep(0.006, 0.02, distance)) * reveal;
+          let packetPosition = mix(a, b, fract(t * 0.22 + offset));
+          let packet = (1.0 - smoothstep(0.0, 0.055, length(p - packetPosition))) * reveal;
+          return vec2<f32>(line, packet);
+        }
+
+        fn nodeField(
+          p: vec2<f32>,
+          center: vec2<f32>,
+          reveal: f32,
+          t: f32,
+          offset: f32
+        ) -> vec2<f32> {
+          let distance = length(p - center);
+          let pulse = sin(t * 3.2 + offset) * 0.5 + 0.5;
+          let core = (1.0 - smoothstep(0.0, 0.024 + pulse * 0.008, distance)) * reveal;
+          let halo = (1.0 - smoothstep(0.035, 0.17, distance)) * reveal;
+          let ringRadius = 0.052 + pulse * 0.018;
+          let ring = (1.0 - smoothstep(0.002, 0.018, abs(distance - ringRadius))) * reveal;
+          return vec2<f32>(core + ring * 0.75, halo);
+        }
+
         @fragment
         fn fragmentMain(input: VertexOut) -> @location(0) vec4<f32> {
           let uv = input.uv;
+          let p = aspectUv(uv);
           let t = uniforms.time * 0.001;
-          let waveA = sin((uv.x * 8.0) + t * 0.9) * 0.5 + 0.5;
-          let waveB = cos((uv.y * 10.0) - t * 0.7) * 0.5 + 0.5;
-          let diagonal = sin((uv.x + uv.y) * 13.0 + t) * 0.5 + 0.5;
-          let grid = max(lineGrid(uv.x + t * 0.015, 12.0), lineGrid(uv.y - t * 0.01, 9.0)) * 0.18;
-          let pulse = smoothstep(0.42, 1.0, waveA * waveB * diagonal);
+          let boot = smoothstep(0.0, 1.25, t);
+          let grid = max(
+            lineGrid(p.x + t * 0.014, 10.0),
+            lineGrid(p.y - t * 0.012, 8.0)
+          ) * 0.1;
+          let scan = (1.0 - smoothstep(0.0, 0.018, abs(fract(uv.y * 1.35 - t * 0.26) - 0.5))) * 0.25;
+
           let base = vec3<f32>(0.015, 0.021, 0.032);
           let cyan = vec3<f32>(0.05, 0.78, 0.92);
           let green = vec3<f32>(0.34, 1.0, 0.68);
           let violet = vec3<f32>(0.46, 0.28, 1.0);
-          let color = base + cyan * grid + green * pulse * 0.2 + violet * diagonal * 0.08;
+          var color = base + cyan * grid + green * scan * 0.22;
+
+          let n0 = nodePosition(0, t);
+          let n1 = nodePosition(1, t);
+          let n2 = nodePosition(2, t);
+          let n3 = nodePosition(3, t);
+          let n4 = nodePosition(4, t);
+          let n5 = nodePosition(5, t);
+
+          let r0 = smoothstep(0.00, 0.18, boot);
+          let r1 = smoothstep(0.16, 0.34, boot);
+          let r2 = smoothstep(0.30, 0.48, boot);
+          let r3 = smoothstep(0.44, 0.62, boot);
+          let r4 = smoothstep(0.58, 0.76, boot);
+          let r5 = smoothstep(0.72, 0.90, boot);
+
+          let l1 = linkField(p, n0, n1, r1, t, 0.08);
+          let l2 = linkField(p, n0, n2, r2, t, 0.22);
+          let l3 = linkField(p, n0, n3, r3, t, 0.39);
+          let l4 = linkField(p, n0, n4, r4, t, 0.57);
+          let l5 = linkField(p, n0, n5, r5, t, 0.72);
+          let linkEnergy = l1.x + l2.x + l3.x + l4.x + l5.x;
+          let packetEnergy = l1.y + l2.y + l3.y + l4.y + l5.y;
+          color += cyan * linkEnergy * 0.58;
+          color += green * packetEnergy * 0.42;
+
+          let f0 = nodeField(p, n0, r0, t, 0.0);
+          let f1 = nodeField(p, n1, r1, t, 1.0);
+          let f2 = nodeField(p, n2, r2, t, 2.0);
+          let f3 = nodeField(p, n3, r3, t, 3.0);
+          let f4 = nodeField(p, n4, r4, t, 4.0);
+          let f5 = nodeField(p, n5, r5, t, 5.0);
+          let coreEnergy = f0.x + f1.x + f2.x + f3.x + f4.x + f5.x;
+          let haloEnergy = f0.y + f1.y + f2.y + f3.y + f4.y + f5.y;
+          color += green * coreEnergy * 0.7;
+          color += violet * haloEnergy * 0.22;
+
+          let barRange = step(0.08, uv.x) * (1.0 - step(0.92, uv.x));
+          let barProgress = 1.0 - step(0.08 + boot * 0.84, uv.x);
+          let barLine = (1.0 - smoothstep(0.0, 0.006, abs(uv.y - 0.93))) * barRange;
+          color += cyan * barLine * 0.16;
+          color += green * barLine * barProgress * 0.58;
+
           return vec4<f32>(color, 1.0);
         }
       `,
@@ -369,6 +522,7 @@ async function startWebGpuShader(
 
     let frame = 0;
     let lastFrame = 0;
+    const startTime = performance.now();
     let visible = true;
 
     const resize = () => {
@@ -403,7 +557,7 @@ async function startWebGpuShader(
       device.queue.writeBuffer(
         uniformBuffer,
         0,
-        new Float32Array([time, canvas.width, canvas.height, 0]),
+        new Float32Array([time - startTime, canvas.width, canvas.height, 0]),
       );
 
       const encoder = device.createCommandEncoder();
@@ -452,11 +606,17 @@ function startCanvasFallback(canvas: HTMLCanvasElement) {
 
   let frame = 0;
   let lastFrame = 0;
+  const startTime = performance.now();
   let visible = true;
-  const points = Array.from({ length: 42 }, (_, index) => ({
-    x: (index * 73) % 100,
-    y: (index * 41) % 100,
-  }));
+  const nodes = [
+    { x: 0.5, y: 0.5 },
+    { x: 0.25, y: 0.24 },
+    { x: 0.76, y: 0.26 },
+    { x: 0.24, y: 0.76 },
+    { x: 0.78, y: 0.76 },
+    { x: 0.5, y: 0.86 },
+  ];
+  const links = [1, 2, 3, 4, 5];
 
   const resize = () => {
     const rect = canvas.getBoundingClientRect();
@@ -485,6 +645,8 @@ function startCanvasFallback(canvas: HTMLCanvasElement) {
     }
 
     lastFrame = time;
+    const elapsed = (time - startTime) * 0.001;
+    const boot = Math.min(1, Math.max(0, elapsed / 1.25));
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
     context.clearRect(0, 0, width, height);
@@ -507,15 +669,91 @@ function startCanvasFallback(canvas: HTMLCanvasElement) {
       context.stroke();
     }
 
-    points.forEach((point, index) => {
-      const x = (point.x / 100) * width;
-      const y = (point.y / 100) * height;
-      const radius = 1.5 + Math.sin(time * 0.001 + index) * 0.8;
-      context.fillStyle = index % 3 === 0 ? "#6affb4" : "#36dfe8";
+    const scanline = (height * ((elapsed * 0.18) % 1));
+    const scanGradient = context.createLinearGradient(0, scanline - 30, 0, scanline + 30);
+    scanGradient.addColorStop(0, "rgba(54, 223, 232, 0)");
+    scanGradient.addColorStop(0.5, "rgba(54, 223, 232, 0.22)");
+    scanGradient.addColorStop(1, "rgba(54, 223, 232, 0)");
+    context.fillStyle = scanGradient;
+    context.fillRect(0, scanline - 30, width, 60);
+
+    const resolvedNode = (index: number) => {
+      const node = nodes[index];
+      const driftX = Math.sin(elapsed * 0.72 + index * 1.7) * 5;
+      const driftY = Math.cos(elapsed * 0.54 + index * 1.1) * 5;
+      return {
+        x: node.x * width + driftX,
+        y: node.y * height + driftY,
+      };
+    };
+
+    const center = resolvedNode(0);
+
+    links.forEach((index, linkIndex) => {
+      const reveal = Math.min(1, Math.max(0, (boot - linkIndex * 0.14) / 0.22));
+      if (reveal <= 0) {
+        return;
+      }
+
+      const node = resolvedNode(index);
+      context.globalAlpha = 0.24 + reveal * 0.54;
+      context.strokeStyle = "#36dfe8";
+      context.lineWidth = 1.4;
       context.beginPath();
-      context.arc(x, y, Math.max(0.6, radius), 0, Math.PI * 2);
+      context.moveTo(center.x, center.y);
+      context.lineTo(node.x, node.y);
+      context.stroke();
+
+      const phase = (elapsed * 0.22 + linkIndex * 0.16) % 1;
+      const packetX = center.x + (node.x - center.x) * phase;
+      const packetY = center.y + (node.y - center.y) * phase;
+      context.globalAlpha = reveal;
+      context.fillStyle = "#6affb4";
+      context.beginPath();
+      context.arc(packetX, packetY, 4.4, 0, Math.PI * 2);
       context.fill();
     });
+
+    nodes.forEach((_, index) => {
+      const reveal = Math.min(1, Math.max(0, (boot - index * 0.12) / 0.2));
+      if (reveal <= 0) {
+        return;
+      }
+
+      const node = resolvedNode(index);
+      const pulse = Math.sin(elapsed * 3.2 + index) * 0.5 + 0.5;
+      context.globalAlpha = reveal * 0.18;
+      context.fillStyle = index === 0 ? "#6affb4" : "#8b6dff";
+      context.beginPath();
+      context.arc(node.x, node.y, 34 + pulse * 8, 0, Math.PI * 2);
+      context.fill();
+
+      context.globalAlpha = reveal * 0.95;
+      context.strokeStyle = index === 0 ? "#6affb4" : "#36dfe8";
+      context.lineWidth = 1.2;
+      context.beginPath();
+      context.arc(node.x, node.y, 16 + pulse * 6, 0, Math.PI * 2);
+      context.stroke();
+
+      context.globalAlpha = reveal;
+      context.fillStyle = index === 0 ? "#6affb4" : "#36dfe8";
+      context.beginPath();
+      context.arc(node.x, node.y, 4.8 + pulse * 2, 0, Math.PI * 2);
+      context.fill();
+    });
+
+    context.globalAlpha = 1;
+    context.strokeStyle = "rgba(54, 223, 232, 0.18)";
+    context.lineWidth = 1;
+    context.beginPath();
+    context.moveTo(width * 0.08, height * 0.93);
+    context.lineTo(width * 0.92, height * 0.93);
+    context.stroke();
+    context.strokeStyle = "#6affb4";
+    context.beginPath();
+    context.moveTo(width * 0.08, height * 0.93);
+    context.lineTo(width * (0.08 + boot * 0.84), height * 0.93);
+    context.stroke();
   };
 
   frame = window.requestAnimationFrame(draw);

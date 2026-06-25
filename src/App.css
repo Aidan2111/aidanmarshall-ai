@@ -331,6 +331,50 @@ h3 {
   min-height: inherit;
 }
 
+.shader-node-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.node-label {
+  position: absolute;
+  border: 1px solid rgba(116, 219, 239, 0.24);
+  border-radius: 999px;
+  padding: 5px 8px;
+  background: rgba(5, 8, 16, 0.62);
+  color: #dffcff;
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+}
+
+.node-label-site {
+  top: 47%;
+  left: 46%;
+}
+
+.node-label-github {
+  top: 19%;
+  left: 14%;
+}
+
+.node-label-linkedin {
+  top: 20%;
+  right: 10%;
+}
+
+.node-label-work {
+  bottom: 18%;
+  left: 14%;
+}
+
+.node-label-writing {
+  right: 10%;
+  bottom: 18%;
+}
+
 .shader-overlay {
   position: absolute;
   right: 24px;
@@ -344,6 +388,27 @@ h3 {
   backdrop-filter: blur(16px);
 }
 
+.renderer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  margin-bottom: 16px;
+  color: var(--green);
+  font-size: 0.74rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.renderer-status span {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--green);
+  box-shadow: 0 0 18px rgba(106, 255, 180, 0.82);
+  animation: status-pulse 1.1s ease-in-out infinite;
+}
+
 .shader-overlay h2,
 .tile-performance h2,
 .tile-signal h2 {
@@ -355,6 +420,22 @@ h3 {
 .tile-performance p,
 .tile-signal p {
   margin-bottom: 0;
+}
+
+.shader-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.shader-readout span {
+  border: 1px solid rgba(106, 255, 180, 0.2);
+  border-radius: 999px;
+  padding: 6px 8px;
+  color: var(--green);
+  font-size: 0.68rem;
+  font-weight: 850;
 }
 
 .signal-list {
@@ -527,6 +608,23 @@ h3 {
     transform: none;
     transition: none;
   }
+
+  .renderer-status span {
+    animation: none;
+  }
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    opacity: 0.58;
+    transform: scale(0.82);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
 }
 
 @media (max-width: 980px) {
@@ -648,5 +746,9 @@ h3 {
     right: 14px;
     bottom: 14px;
     left: 14px;
+  }
+
+  .node-label {
+    font-size: 0.56rem;
   }
 }
