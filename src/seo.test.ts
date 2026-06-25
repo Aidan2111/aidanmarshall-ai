@@ -62,8 +62,9 @@ describe("structured data and metadata", () => {
     expect(siteTitle).toBe(
       "Aidan Marshall | AI Systems, Agentic Workflows, and Open Source",
     );
+    expect(siteDescription).toContain("Public identity page");
     expect(siteDescription).toContain("Dallas-based AI engineer");
-    expect(siteDescription).toContain("open-source AI tools");
+    expect(siteDescription).toContain("open-source code");
     expect(siteDescription).toContain("LinkedIn writing");
   });
 });

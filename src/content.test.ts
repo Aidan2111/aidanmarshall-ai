@@ -34,9 +34,9 @@ describe("canonical public identity content", () => {
   it("keeps the public page focused on AI, open source, and LinkedIn writing", () => {
     expect(focusAreas).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ label: "AI systems" }),
-        expect.objectContaining({ label: "Open source" }),
-        expect.objectContaining({ label: "LinkedIn writing" }),
+        expect.objectContaining({ label: "Current work" }),
+        expect.objectContaining({ label: "Public code" }),
+        expect.objectContaining({ label: "Writing trail" }),
       ]),
     );
     expect(writing.profileUrl).toBe(profile.links.linkedin);

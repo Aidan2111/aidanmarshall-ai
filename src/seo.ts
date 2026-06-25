@@ -4,7 +4,7 @@ export const siteTitle =
   "Aidan Marshall | AI Systems, Agentic Workflows, and Open Source";
 
 export const siteDescription =
-  "Aidan Marshall is a Dallas-based AI engineer building agentic systems, enterprise automation, open-source AI tools, and LinkedIn writing on practical AI workflows.";
+  "Public identity page for Aidan Marshall, a Dallas-based AI engineer working on agentic systems, enterprise automation, open-source code, and LinkedIn writing.";
 
 export const canonicalUrl = profile.canonicalUrl;
 

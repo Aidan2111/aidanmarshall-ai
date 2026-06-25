@@ -56,11 +56,11 @@ export default function App() {
           </article>
 
           <article className="tile tile-signal tile-span-3" data-testid="entity-tile">
-            <p className="tile-label">Entity optimization</p>
-            <h2>Source of truth</h2>
+            <p className="tile-label">Canonical record</p>
+            <h2>Index packet</h2>
             <p>
-              Built to make Aidan Marshall machine-readable as one person across search,
-              GitHub, LinkedIn, and future aidanmarshall.ai pages.
+              One page that states what search and AI crawlers should reconcile:
+              domain, Person schema, LinkedIn, GitHub, work, writing, and credentials.
             </p>
             <dl className="signal-list">
               <div>
@@ -77,7 +77,7 @@ export default function App() {
               </div>
               <div>
                 <dt>Proof</dt>
-                <dd>Work, projects, writing, credentials</dd>
+                <dd>Work, code, writing, credentials</dd>
               </div>
             </dl>
           </article>
@@ -287,6 +287,7 @@ function ShaderField() {
         <span className="node-label node-label-linkedin">LinkedIn</span>
         <span className="node-label node-label-work">PwC</span>
         <span className="node-label node-label-writing">writing</span>
+        <span className="node-label node-label-credentials">certs</span>
       </div>
       <div className="shader-overlay">
         <p className="renderer-status" aria-live="polite">
@@ -294,10 +295,10 @@ function ShaderField() {
           {rendererLabel}
         </p>
         <p className="tile-label">Live renderer</p>
-        <h2>Entity graph online</h2>
+        <h2>Index graph running</h2>
         <p>
-          Page-load renderer connects the canonical site, GitHub, LinkedIn, work,
-          writing, and credentials as an animated entity graph.
+          It draws the reconciliation path: aidanmarshall.ai at center, then
+          GitHub, LinkedIn, PwC, writing, and credentials.
         </p>
         <div className="shader-readout" aria-label="Renderer performance budget">
           <span>30 FPS cap</span>
@@ -455,10 +456,10 @@ async function startWebGpuShader(
           let scan = (1.0 - smoothstep(0.0, 0.018, abs(fract(uv.y * 1.35 - t * 0.26) - 0.5))) * 0.25;
 
           let base = vec3<f32>(0.015, 0.021, 0.032);
-          let cyan = vec3<f32>(0.05, 0.78, 0.92);
-          let green = vec3<f32>(0.34, 1.0, 0.68);
-          let violet = vec3<f32>(0.46, 0.28, 1.0);
-          var color = base + cyan * grid + green * scan * 0.22;
+          let amber = vec3<f32>(0.90, 0.68, 0.30);
+          let signal = vec3<f32>(0.48, 1.0, 0.55);
+          let steel = vec3<f32>(0.48, 0.56, 0.44);
+          var color = base + amber * grid + signal * scan * 0.2;
 
           let n0 = nodePosition(0, t);
           let n1 = nodePosition(1, t);
@@ -481,8 +482,8 @@ async function startWebGpuShader(
           let l5 = linkField(p, n0, n5, r5, t, 0.72);
           let linkEnergy = l1.x + l2.x + l3.x + l4.x + l5.x;
           let packetEnergy = l1.y + l2.y + l3.y + l4.y + l5.y;
-          color += cyan * linkEnergy * 0.58;
-          color += green * packetEnergy * 0.42;
+          color += amber * linkEnergy * 0.58;
+          color += signal * packetEnergy * 0.42;
 
           let f0 = nodeField(p, n0, r0, t, 0.0);
           let f1 = nodeField(p, n1, r1, t, 1.0);
@@ -492,14 +493,14 @@ async function startWebGpuShader(
           let f5 = nodeField(p, n5, r5, t, 5.0);
           let coreEnergy = f0.x + f1.x + f2.x + f3.x + f4.x + f5.x;
           let haloEnergy = f0.y + f1.y + f2.y + f3.y + f4.y + f5.y;
-          color += green * coreEnergy * 0.7;
-          color += violet * haloEnergy * 0.22;
+          color += signal * coreEnergy * 0.68;
+          color += steel * haloEnergy * 0.22;
 
           let barRange = step(0.08, uv.x) * (1.0 - step(0.92, uv.x));
           let barProgress = 1.0 - step(0.08 + boot * 0.84, uv.x);
           let barLine = (1.0 - smoothstep(0.0, 0.006, abs(uv.y - 0.93))) * barRange;
-          color += cyan * barLine * 0.16;
-          color += green * barLine * barProgress * 0.58;
+          color += amber * barLine * 0.2;
+          color += signal * barLine * barProgress * 0.52;
 
           return vec4<f32>(color, 1.0);
         }
@@ -650,9 +651,9 @@ function startCanvasFallback(canvas: HTMLCanvasElement) {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
     context.clearRect(0, 0, width, height);
-    context.fillStyle = "#050810";
+    context.fillStyle = "#080a08";
     context.fillRect(0, 0, width, height);
-    context.strokeStyle = "rgba(54, 223, 232, 0.18)";
+    context.strokeStyle = "rgba(231, 181, 93, 0.16)";
     context.lineWidth = 1;
 
     for (let x = 0; x < width; x += 32) {
@@ -671,9 +672,9 @@ function startCanvasFallback(canvas: HTMLCanvasElement) {
 
     const scanline = (height * ((elapsed * 0.18) % 1));
     const scanGradient = context.createLinearGradient(0, scanline - 30, 0, scanline + 30);
-    scanGradient.addColorStop(0, "rgba(54, 223, 232, 0)");
-    scanGradient.addColorStop(0.5, "rgba(54, 223, 232, 0.22)");
-    scanGradient.addColorStop(1, "rgba(54, 223, 232, 0)");
+    scanGradient.addColorStop(0, "rgba(231, 181, 93, 0)");
+    scanGradient.addColorStop(0.5, "rgba(231, 181, 93, 0.22)");
+    scanGradient.addColorStop(1, "rgba(231, 181, 93, 0)");
     context.fillStyle = scanGradient;
     context.fillRect(0, scanline - 30, width, 60);
 
@@ -697,7 +698,7 @@ function startCanvasFallback(canvas: HTMLCanvasElement) {
 
       const node = resolvedNode(index);
       context.globalAlpha = 0.24 + reveal * 0.54;
-      context.strokeStyle = "#36dfe8";
+      context.strokeStyle = "#e7b55d";
       context.lineWidth = 1.4;
       context.beginPath();
       context.moveTo(center.x, center.y);
@@ -708,7 +709,7 @@ function startCanvasFallback(canvas: HTMLCanvasElement) {
       const packetX = center.x + (node.x - center.x) * phase;
       const packetY = center.y + (node.y - center.y) * phase;
       context.globalAlpha = reveal;
-      context.fillStyle = "#6affb4";
+      context.fillStyle = "#7aff8c";
       context.beginPath();
       context.arc(packetX, packetY, 4.4, 0, Math.PI * 2);
       context.fill();
@@ -723,33 +724,33 @@ function startCanvasFallback(canvas: HTMLCanvasElement) {
       const node = resolvedNode(index);
       const pulse = Math.sin(elapsed * 3.2 + index) * 0.5 + 0.5;
       context.globalAlpha = reveal * 0.18;
-      context.fillStyle = index === 0 ? "#6affb4" : "#8b6dff";
+      context.fillStyle = index === 0 ? "#7aff8c" : "#8d8c6f";
       context.beginPath();
       context.arc(node.x, node.y, 34 + pulse * 8, 0, Math.PI * 2);
       context.fill();
 
       context.globalAlpha = reveal * 0.95;
-      context.strokeStyle = index === 0 ? "#6affb4" : "#36dfe8";
+      context.strokeStyle = index === 0 ? "#7aff8c" : "#e7b55d";
       context.lineWidth = 1.2;
       context.beginPath();
       context.arc(node.x, node.y, 16 + pulse * 6, 0, Math.PI * 2);
       context.stroke();
 
       context.globalAlpha = reveal;
-      context.fillStyle = index === 0 ? "#6affb4" : "#36dfe8";
+      context.fillStyle = index === 0 ? "#7aff8c" : "#e7b55d";
       context.beginPath();
       context.arc(node.x, node.y, 4.8 + pulse * 2, 0, Math.PI * 2);
       context.fill();
     });
 
     context.globalAlpha = 1;
-    context.strokeStyle = "rgba(54, 223, 232, 0.18)";
+    context.strokeStyle = "rgba(231, 181, 93, 0.22)";
     context.lineWidth = 1;
     context.beginPath();
     context.moveTo(width * 0.08, height * 0.93);
     context.lineTo(width * 0.92, height * 0.93);
     context.stroke();
-    context.strokeStyle = "#6affb4";
+    context.strokeStyle = "#7aff8c";
     context.beginPath();
     context.moveTo(width * 0.08, height * 0.93);
     context.lineTo(width * (0.08 + boot * 0.84), height * 0.93);

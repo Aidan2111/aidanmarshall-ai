@@ -82,12 +82,12 @@ describe("Aidan Marshall entity homepage", () => {
     expect(
       screen.getByLabelText("Performance-conscious WebGPU shader field"),
     ).toHaveAttribute("data-renderer-state", "booting");
-    expect(screen.getByRole("heading", { name: "Entity graph online" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Index graph running" })).toBeInTheDocument();
     expect(screen.getByText("Booting GPU graph")).toBeInTheDocument();
-    expect(screen.getByText(/Page-load renderer connects/i)).toBeInTheDocument();
+    expect(screen.getByText(/draws the reconciliation path/i)).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "30 FPS cap" })).toBeInTheDocument();
     expect(screen.getAllByText(/reduced motion/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByRole("heading", { name: "Source of truth" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Index packet" })).toBeInTheDocument();
     expect(screen.getByText("ProfilePage + Person JSON-LD")).toBeInTheDocument();
   });
 });

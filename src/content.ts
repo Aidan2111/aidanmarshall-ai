@@ -52,7 +52,7 @@ export const profile: Profile = {
   headline:
     "Dallas-based AI engineer building agentic systems, enterprise automation, and open-source AI tools.",
   summary:
-    "Aidan Marshall works on AI systems that connect model capabilities to real enterprise workflows, with experience across Google ADK, Claude SDK, Harvey AI, Azure OpenAI, MCP, React, TypeScript, Python, and Databricks.",
+    "This is the public record for Aidan Marshall: current AI engineering work, open-source code, LinkedIn writing, credentials, and the profiles search engines should reconcile.",
   currentRole: "Senior Associate Native AI Engineer",
   currentOrganization: "PwC (C2H Brooksource)",
   priorOrganization: "IBM",
@@ -80,19 +80,19 @@ export const profile: Profile = {
 
 export const focusAreas: FocusArea[] = [
   {
-    label: "AI systems",
+    label: "Current work",
     description:
-      "Designing agentic AI workflows, orchestration patterns, and AI-assisted development systems for enterprise teams.",
+      "Senior Associate Native AI Engineer work connected to agentic systems, enterprise automation, and AI-assisted development.",
   },
   {
-    label: "Open source",
+    label: "Public code",
     description:
-      "Publishing practical AI, automation, and data projects through GitHub under the Aidan2111 profile.",
+      "GitHub projects under Aidan2111, with public work prepared as the durable proof layer for this identity page.",
   },
   {
-    label: "LinkedIn writing",
+    label: "Writing trail",
     description:
-      "Writing about AI systems, enterprise automation, and practical agentic workflows through LinkedIn.",
+      "LinkedIn posts and articles that connect the same name to AI systems, automation, and practical workflow work.",
   },
 ];
 
