@@ -11,6 +11,7 @@ describe("Aidan Marshall entity homepage", () => {
       screen.getByRole("heading", { level: 1, name: "Aidan Marshall" }),
     ).toBeInTheDocument();
     expect(screen.getByText(profile.headline)).toBeInTheDocument();
+    expect(screen.getByText("public entity file")).toBeInTheDocument();
     expect(screen.getAllByText("Dallas, TX").length).toBeGreaterThanOrEqual(1);
   });
 
@@ -35,7 +36,7 @@ describe("Aidan Marshall entity homepage", () => {
   it("renders work history from the resume-backed content", () => {
     render(<App />);
 
-    const work = screen.getByRole("region", { name: "Work" });
+    const work = screen.getByRole("region", { name: "AI engineering work" });
     expect(within(work).getByText("PwC (C2H Brooksource)")).toBeInTheDocument();
     expect(within(work).getByText("IBM")).toBeInTheDocument();
     expect(
@@ -50,13 +51,13 @@ describe("Aidan Marshall entity homepage", () => {
     render(<App />);
 
     expect(
-      screen.getByRole("region", { name: "Open-source projects" }),
+      screen.getByRole("region", { name: "Open-source proof to connect" }),
     ).toBeInTheDocument();
     expect(
       screen.getByText("Sentiment-Driven Quantitative Carry Trade Model"),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("region", { name: "LinkedIn writing" }),
+      screen.getByRole("region", { name: "LinkedIn record" }),
     ).toBeInTheDocument();
     expect(screen.getByText(/Articles and posts on AI systems/i)).toBeInTheDocument();
   });
@@ -65,8 +66,8 @@ describe("Aidan Marshall entity homepage", () => {
     const { container } = render(<App />);
 
     expect(
-      screen.getByText("Southern Methodist University, Cox School of Business"),
-    ).toBeInTheDocument();
+      screen.getAllByText("Southern Methodist University, Cox School of Business").length,
+    ).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("Databricks Fundamentals")).toBeInTheDocument();
 
     expect(container.textContent).not.toMatch(/Tampa/i);
@@ -85,9 +86,9 @@ describe("Aidan Marshall entity homepage", () => {
     expect(screen.getByRole("heading", { name: "Index graph running" })).toBeInTheDocument();
     expect(screen.getByText("Booting GPU graph")).toBeInTheDocument();
     expect(screen.getByText(/draws the reconciliation path/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Reconcile these profiles" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "30 FPS cap" })).toBeInTheDocument();
-    expect(screen.getAllByText(/reduced motion/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByRole("heading", { name: "Index packet" })).toBeInTheDocument();
+    expect(screen.getByText(/WebGPU only runs when visible/i)).toBeInTheDocument();
     expect(screen.getByText("ProfilePage + Person JSON-LD")).toBeInTheDocument();
   });
 });

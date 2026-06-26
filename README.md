@@ -8,6 +8,8 @@ Canonical personal entity site for Aidan Marshall, focused on AI systems, enterp
 - Prerendered static HTML for crawler and AI-scraper readability
 - `ProfilePage` + `Person` JSON-LD for entity disambiguation
 - LinkedIn and GitHub `sameAs` links
+- Tile-based public entity dossier for work, code, writing, proof, and launch steps
+- Performance-conscious WebGPU identity graph with a canvas fallback
 - `robots.txt` and `sitemap.xml`
 - GitHub Actions deployment to GitHub Pages
 

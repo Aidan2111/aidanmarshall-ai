@@ -11,58 +11,91 @@ import {
 } from "./content";
 
 export default function App() {
+  const evidenceLinks = [
+    {
+      label: "LinkedIn",
+      href: profile.links.linkedin,
+      purpose: "primary professional profile",
+    },
+    {
+      label: "GitHub",
+      href: profile.links.github,
+      purpose: "public code and repository history",
+    },
+  ];
+  const launchQueue = [
+    ["Current host", "GitHub Pages deployed"],
+    ["Next DNS step", "point aidanmarshall.ai at this site"],
+    ["Search Console", "submit sitemap after DNS resolves"],
+    ["Profile loop", "link LinkedIn and GitHub back here"],
+  ];
+
   return (
     <>
-      <header className="site-header" aria-label="Primary navigation">
-        <a className="brand" href="#top" aria-label="Aidan Marshall homepage">
+      <header className="record-header" aria-label="Primary navigation">
+        <a className="record-mark" href="#top" aria-label="Aidan Marshall homepage">
           AM
         </a>
-        <nav className="nav-links" aria-label="Page sections">
-          {navigationItems.map((item) => (
+        <div className="record-title">
+          <span>aidanmarshall.ai/#person</span>
+          <strong>public entity file</strong>
+        </div>
+        <nav className="record-nav" aria-label="Page sections">
+          {[...navigationItems, { label: "Launch", href: "#launch" }].map((item) => (
             <a key={item.href} href={item.href}>
               {item.label}
             </a>
           ))}
         </nav>
-        <div className="header-actions">
-          <a href={profile.links.linkedin} rel="me noreferrer" target="_blank">
-            LinkedIn
-          </a>
-          <a href={profile.links.github} rel="me noreferrer" target="_blank">
-            GitHub
-          </a>
-        </div>
       </header>
 
-      <main id="top" className="site-shell">
-        <section className="tile-console" data-testid="tile-console" aria-labelledby="hero-title">
-          <article className="tile tile-identity tile-span-5" data-testid="entity-tile">
-            <p className="location">{profile.location}</p>
+      <main id="top" className="entity-file">
+        <section className="resolver-grid" data-testid="tile-console" aria-labelledby="hero-title">
+          <article className="record-panel identity-panel" data-testid="entity-tile">
+            <p className="eyebrow">{profile.location} / canonical identity</p>
             <h1 id="hero-title">{profile.name}</h1>
-            <p className="hero-headline">{profile.headline}</p>
-            <p className="hero-summary">{profile.summary}</p>
-            <div className="hero-actions" aria-label="Canonical profile links">
-              <a className="primary-link" href={profile.links.linkedin} rel="me noreferrer" target="_blank">
+            <p className="positioning">{profile.headline}</p>
+            <p className="record-summary">{profile.summary}</p>
+            <dl className="identity-facts">
+              <div>
+                <dt>Current work</dt>
+                <dd>{profile.currentOrganization}</dd>
+              </div>
+              <div>
+                <dt>Prior context</dt>
+                <dd>{profile.priorOrganization}</dd>
+              </div>
+              <div>
+                <dt>Education</dt>
+                <dd>{profile.education}</dd>
+              </div>
+            </dl>
+            <div className="record-actions" aria-label="Canonical profile links">
+              <a className="primary-link" href={profile.links.linkedin} rel="me noopener noreferrer" target="_blank">
                 LinkedIn
               </a>
-              <a className="secondary-link" href={profile.links.github} rel="me noreferrer" target="_blank">
+              <a className="secondary-link" href={profile.links.github} rel="me noopener noreferrer" target="_blank">
                 GitHub
               </a>
             </div>
           </article>
 
-          <article className="tile tile-shader tile-span-4" data-testid="entity-tile">
+          <article className="record-panel resolver-panel" data-testid="entity-tile">
             <ShaderField />
           </article>
 
-          <article className="tile tile-signal tile-span-3" data-testid="entity-tile">
-            <p className="tile-label">Canonical record</p>
-            <h2>Index packet</h2>
-            <p>
-              One page that states what search and AI crawlers should reconcile:
-              domain, Person schema, LinkedIn, GitHub, work, writing, and credentials.
-            </p>
-            <dl className="signal-list">
+          <aside className="record-panel evidence-panel" data-testid="entity-tile">
+            <p className="eyebrow">sameAs map</p>
+            <h2>Reconcile these profiles</h2>
+            <div className="evidence-list">
+              {evidenceLinks.map((link) => (
+                <a href={link.href} key={link.label} rel="me noopener noreferrer" target="_blank">
+                  <span>{link.label}</span>
+                  <small>{link.purpose}</small>
+                </a>
+              ))}
+            </div>
+            <dl className="schema-facts">
               <div>
                 <dt>Domain</dt>
                 <dd>{profile.domain}</dd>
@@ -72,46 +105,40 @@ export default function App() {
                 <dd>ProfilePage + Person JSON-LD</dd>
               </div>
               <div>
-                <dt>sameAs</dt>
-                <dd>LinkedIn + GitHub</dd>
-              </div>
-              <div>
-                <dt>Proof</dt>
-                <dd>Work, code, writing, credentials</dd>
+                <dt>Identity proof</dt>
+                <dd>work, code, writing, credentials</dd>
               </div>
             </dl>
-          </article>
+          </aside>
 
-          {focusAreas.map((area) => (
-            <article className="tile tile-focus" key={area.label} data-testid="entity-tile">
-              <p className="tile-label">{area.label}</p>
-              <p>{area.description}</p>
+          <div className="focus-strip">
+            {focusAreas.map((area) => (
+              <article className="record-panel focus-panel" key={area.label} data-testid="entity-tile">
+                <p className="eyebrow">{area.label}</p>
+                <p>{area.description}</p>
+              </article>
+            ))}
+            <article className="record-panel focus-panel" data-testid="entity-tile">
+              <p className="eyebrow">Renderer budget</p>
+              <h2>30 FPS cap</h2>
+              <p>WebGPU only runs when visible, supported, and motion is allowed.</p>
             </article>
-          ))}
-
-          <article className="tile tile-performance tile-span-3" data-testid="entity-tile">
-            <p className="tile-label">Animation budget</p>
-            <h2>30 FPS cap</h2>
-            <p>WebGPU runs only when available, visible, and motion is allowed. Canvas fallback keeps reduced motion and older browsers readable.</p>
-          </article>
+          </div>
         </section>
 
-        <Section id="work" title="Work">
-          <div className="timeline tile-grid">
+        <Section id="work" eyebrow="work ledger" title="AI engineering work">
+          <div className="ledger-list">
             {roles.map((role) => (
-              <article className="tile timeline-card" data-testid="entity-tile" key={`${role.organization}-${role.title}`}>
+              <article className="record-panel ledger-card" data-testid="entity-tile" key={`${role.organization}-${role.title}`}>
                 <div>
+                  <p className="eyebrow">{role.period}</p>
                   <h3>{role.title}</h3>
-                  <p className="role-organization">{role.organization}</p>
+                  <p className="organization">{role.organization}</p>
                 </div>
-                <dl className="role-meta">
+                <dl className="compact-meta">
                   <div>
                     <dt>Location</dt>
                     <dd>{role.location}</dd>
-                  </div>
-                  <div>
-                    <dt>Period</dt>
-                    <dd>{role.period}</dd>
                   </div>
                 </dl>
                 <ul>
@@ -126,13 +153,14 @@ export default function App() {
 
         <Section
           id="projects"
-          title="Open-source projects"
-          intro={`GitHub is the canonical home for public code under ${profile.links.github}. These project summaries start from resume-backed work and can be linked to specific repositories as they are prepared for public review.`}
+          eyebrow="code ledger"
+          title="Open-source proof to connect"
+          intro={`GitHub remains the public code anchor under ${profile.links.github}. These entries keep claims grounded in repositories and project work instead of generic capability statements.`}
         >
-          <div className="project-grid">
+          <div className="project-ledger">
             {projects.map((project) => (
-              <article className="tile project-card" data-testid="entity-tile" key={project.name}>
-                <p className="card-label">{project.category}</p>
+              <article className="record-panel project-card" data-testid="entity-tile" key={project.name}>
+                <p className="eyebrow">{project.category}</p>
                 <h3>{project.name}</h3>
                 <p>{project.description}</p>
                 <ul className="tag-list" aria-label={`${project.name} technologies`}>
@@ -145,36 +173,47 @@ export default function App() {
           </div>
         </Section>
 
-        <Section id="writing" title="LinkedIn writing">
-          <div className="tile writing-panel" data-testid="entity-tile">
+        <Section id="writing" eyebrow="writing trail" title="LinkedIn record">
+          <div className="record-panel writing-panel" data-testid="entity-tile">
             <div>
               <h3>{writing.title}</h3>
               <p>{writing.description}</p>
             </div>
-            <a href={writing.profileUrl} rel="me noreferrer" target="_blank">
+            <a href={writing.profileUrl} rel="me noopener noreferrer" target="_blank">
               Read on LinkedIn
             </a>
           </div>
         </Section>
 
-        <Section id="proof" title="Proof">
-          <div className="proof-grid">
+        <Section id="proof" eyebrow="proof packet" title="Credentials and disambiguators">
+          <div className="proof-ledger">
             {proofStack.map((proof) => (
-              <article className="tile" data-testid="entity-tile" key={proof}>{proof}</article>
+              <article className="record-panel proof-card" data-testid="entity-tile" key={proof}>{proof}</article>
             ))}
           </div>
         </Section>
 
         <Section
           id="launch"
-          title="Domain launch checklist"
-          intro="The local site is built so the public deployment can become the source-of-truth page for Google Search, structured data, and AI crawlers."
+          eyebrow="launch queue"
+          title="What still has to happen after the domain is bought"
+          intro="The GitHub Pages version is ready as a staging source. The domain and profile backlinks turn it into the durable canonical page."
         >
-          <ol className="tile launch-list" data-testid="entity-tile">
-            {deploymentChecklist.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ol>
+          <div className="launch-grid">
+            <ol className="record-panel launch-list" data-testid="entity-tile">
+              {deploymentChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ol>
+            <div className="record-panel launch-summary" data-testid="entity-tile">
+              {launchQueue.map(([label, value]) => (
+                <dl key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </dl>
+              ))}
+            </div>
+          </div>
         </Section>
       </main>
     </>
@@ -183,11 +222,13 @@ export default function App() {
 
 function Section({
   children,
+  eyebrow,
   id,
   intro,
   title,
 }: {
   children: React.ReactNode;
+  eyebrow: string;
   id: string;
   intro?: string;
   title: string;
@@ -195,10 +236,13 @@ function Section({
   const headingId = `${id}-heading`;
 
   return (
-    <section className="page-section" id={id} aria-labelledby={headingId}>
+    <section className="record-section" id={id} aria-labelledby={headingId}>
       <div className="section-heading">
-        <h2 id={headingId}>{title}</h2>
-        {intro ? <p>{intro}</p> : null}
+        <p className="eyebrow">{eyebrow}</p>
+        <div>
+          <h2 id={headingId}>{title}</h2>
+          {intro ? <p>{intro}</p> : null}
+        </div>
       </div>
       {children}
     </section>
