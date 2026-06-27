@@ -1,27 +1,27 @@
 import { describe, expect, it } from "vitest";
 import {
-  deploymentChecklist,
+  certifications,
   focusAreas,
+  openSource,
   profile,
   projects,
-  proofStack,
   roles,
   writing,
 } from "./content";
 
-const publicPayload = () =>
+const payload = () =>
   JSON.stringify({
-    deploymentChecklist,
+    certifications,
     focusAreas,
+    openSource,
     profile,
     projects,
-    proofStack,
     roles,
     writing,
   });
 
-describe("canonical public identity content", () => {
-  it("uses Aidan Marshall's approved canonical identity", () => {
+describe("site content", () => {
+  it("uses Aidan Marshall's canonical identity and links", () => {
     expect(profile.name).toBe("Aidan Marshall");
     expect(profile.canonicalUrl).toBe("https://aidanmarshall.ai/");
     expect(profile.location).toBe("Dallas, TX");
@@ -31,26 +31,37 @@ describe("canonical public identity content", () => {
     expect(profile.links.github).toBe("https://github.com/Aidan2111");
   });
 
-  it("keeps the public page focused on AI, open source, and LinkedIn writing", () => {
-    expect(focusAreas).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ label: "Current work" }),
-        expect.objectContaining({ label: "Public code" }),
-        expect.objectContaining({ label: "Writing trail" }),
-      ]),
+  it("reflects the resume job title and education", () => {
+    expect(profile.currentTitle).toBe("Senior AI Engineer");
+    expect(profile.currentOrganization).toBe("PwC");
+    expect(profile.education).toBe(
+      "Southern Methodist University, Cox School of Business",
     );
-    expect(writing.profileUrl).toBe(profile.links.linkedin);
-    expect(projects.length).toBeGreaterThanOrEqual(3);
   });
 
-  it("keeps resume-backed work and proof details available", () => {
+  it("keeps resume-backed work history in order", () => {
     expect(roles.map((role) => role.organization)).toEqual([
       "PwC (C2H Brooksource)",
       "IBM",
     ]);
-    expect(proofStack).toEqual(
+    expect(roles[0].highlights.join(" ")).toMatch(/Google ADK and the Claude SDK/);
+    expect(roles[1].highlights.join(" ")).toMatch(/Azure OpenAI/);
+  });
+
+  it("routes writing to LinkedIn and open source to GitHub", () => {
+    expect(writing.url).toBe(profile.links.linkedin);
+    expect(openSource.url).toBe(profile.links.github);
+  });
+
+  it("keeps at least three projects and the resume certifications", () => {
+    expect(projects.length).toBeGreaterThanOrEqual(3);
+    expect(focusAreas.length).toBe(3);
+    expect(projects.filter((project) => project.url).length).toBeGreaterThanOrEqual(2);
+    expect(projects.map((project) => project.url)).toContain(
+      "https://github.com/Aidan2111/agent-autonomy-score",
+    );
+    expect(certifications).toEqual(
       expect.arrayContaining([
-        "Southern Methodist University, Cox School of Business",
         "Microsoft Agentic AI Solution Architect (AB-100)",
         "Microsoft AI Engineer (AI-102)",
         "Databricks Fundamentals",
@@ -59,22 +70,19 @@ describe("canonical public identity content", () => {
     );
   });
 
-  it("does not expose excluded location or private contact details", () => {
-    const payload = publicPayload();
-
-    expect(payload).not.toMatch(/Tampa/i);
-    expect(payload).not.toMatch(/949\D*422\D*5080/);
-    expect(payload).not.toMatch(/aidan\.marshall25@outlook\.com/i);
+  it("does not expose private contact details or excluded locations", () => {
+    const text = payload();
+    expect(text).not.toMatch(/Tampa/i);
+    expect(text).not.toMatch(/949\D*422\D*5080/);
+    expect(text).not.toMatch(/aidan\.marshall25@outlook\.com/i);
   });
 
-  it("includes launch steps needed for the real domain", () => {
-    expect(deploymentChecklist).toEqual(
-      expect.arrayContaining([
-        "Buy aidanmarshall.ai",
-        "Add https://aidanmarshall.ai to Google Search Console",
-        "Submit https://aidanmarshall.ai/sitemap.xml",
-        "Validate structured data with Google's Rich Results Test",
-      ]),
-    );
+  it("stays free of build/SEO meta-content that belongs off the page", () => {
+    const text = payload();
+    expect(text).not.toMatch(/entity file/i);
+    expect(text).not.toMatch(/sameAs/i);
+    expect(text).not.toMatch(/WebGPU/i);
+    expect(text).not.toMatch(/buy aidanmarshall\.ai/i);
+    expect(text).not.toMatch(/sitemap/i);
   });
 });

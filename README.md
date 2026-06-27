@@ -1,15 +1,14 @@
 # aidanmarshall.ai
 
-Canonical personal entity site for Aidan Marshall, focused on AI systems, enterprise automation, open-source projects, and LinkedIn writing.
+Personal landing page for Aidan Marshall — an AI engineer building agentic systems and enterprise automation. The site presents experience, projects, writing, and ways to connect, and is built so search engines and LLMs can resolve the entity cleanly.
 
 ## What This Includes
 
 - Vite, React, and TypeScript site
-- Prerendered static HTML for crawler and AI-scraper readability
-- `ProfilePage` + `Person` JSON-LD for entity disambiguation
-- LinkedIn and GitHub `sameAs` links
-- Tile-based public entity dossier for work, code, writing, proof, and launch steps
-- Performance-conscious WebGPU identity graph with a canvas fallback
+- Prerendered static HTML so crawlers and AI scrapers read full content without running JavaScript
+- `Person` + `ProfilePage` + `WebSite` JSON-LD graph, with LinkedIn and GitHub as `sameAs` links
+- Human-readable sections: hero, experience, projects, writing, capabilities, and contact
+- A subtle, decorative ambient background (WebGPU with a canvas fallback, disabled under reduced-motion)
 - `robots.txt` and `sitemap.xml`
 - GitHub Actions deployment to GitHub Pages
 

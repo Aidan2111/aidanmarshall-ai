@@ -3,27 +3,28 @@ import { describe, expect, it } from "vitest";
 import App from "./App";
 import { profile } from "./content";
 
-describe("Aidan Marshall entity homepage", () => {
-  it("renders the hero identity and positioning", () => {
+describe("Aidan Marshall landing page", () => {
+  it("leads with the name, role, and positioning", () => {
     render(<App />);
 
     expect(
       screen.getByRole("heading", { level: 1, name: "Aidan Marshall" }),
     ).toBeInTheDocument();
     expect(screen.getByText(profile.headline)).toBeInTheDocument();
-    expect(screen.getByText("public entity file")).toBeInTheDocument();
-    expect(screen.getAllByText("Dallas, TX").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Dallas, TX/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/AI Engineer · Dallas, TX/)).toBeInTheDocument();
   });
 
-  it("renders canonical LinkedIn and GitHub links", () => {
+  it("links to the canonical LinkedIn and GitHub profiles", () => {
     render(<App />);
 
     expect(
       screen
         .getAllByRole("link", { name: /linkedin/i })
-        .some((link) =>
-          link.getAttribute("href") ===
-          "https://www.linkedin.com/in/aidan-marshall77",
+        .some(
+          (link) =>
+            link.getAttribute("href") ===
+            "https://www.linkedin.com/in/aidan-marshall77",
         ),
     ).toBe(true);
     expect(
@@ -33,62 +34,62 @@ describe("Aidan Marshall entity homepage", () => {
     ).toBe(true);
   });
 
-  it("renders work history from the resume-backed content", () => {
+  it("renders resume-backed experience", () => {
     render(<App />);
 
-    const work = screen.getByRole("region", { name: "AI engineering work" });
+    const work = screen.getByRole("region", { name: "Where I've done the work" });
     expect(within(work).getByText("PwC (C2H Brooksource)")).toBeInTheDocument();
     expect(within(work).getByText("IBM")).toBeInTheDocument();
-    expect(
-      within(work).getByText(/Google ADK and Claude SDK/i),
-    ).toBeInTheDocument();
-    expect(
-      within(work).getByText(/Azure OpenAI services/i),
-    ).toBeInTheDocument();
+    expect(within(work).getByText(/Google ADK and the Claude SDK/)).toBeInTheDocument();
+    expect(within(work).getByText(/Azure OpenAI/)).toBeInTheDocument();
   });
 
-  it("renders open-source projects and LinkedIn writing sections", () => {
+  it("renders projects, writing, and open-source sections", () => {
     render(<App />);
 
+    const projects = screen.getByRole("region", { name: "Things I've built" });
     expect(
-      screen.getByRole("region", { name: "Open-source proof to connect" }),
+      within(projects).getByText("Sentiment-Driven Quantitative Carry Trade Model"),
     ).toBeInTheDocument();
+    expect(within(projects).getByText("Agent Autonomy Score")).toBeInTheDocument();
     expect(
-      screen.getByText("Sentiment-Driven Quantitative Carry Trade Model"),
-    ).toBeInTheDocument();
+      within(projects)
+        .getAllByRole("link", { name: /view repo/i })
+        .some(
+          (link) =>
+            link.getAttribute("href") ===
+            "https://github.com/Aidan2111/agent-autonomy-score",
+        ),
+    ).toBe(true);
+
+    const share = screen.getByRole("region", { name: "Where I share the work" });
     expect(
-      screen.getByRole("region", { name: "LinkedIn record" }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Articles and posts on AI systems/i)).toBeInTheDocument();
+      within(share).getByRole("link", { name: /read on linkedin/i }),
+    ).toHaveAttribute("href", profile.links.linkedin);
+    expect(
+      within(share).getByRole("link", { name: /view on github/i }),
+    ).toHaveAttribute("href", profile.links.github);
   });
 
-  it("renders proof stack and keeps excluded private details off the page", () => {
-    const { container } = render(<App />);
+  it("renders skills, credentials, and education", () => {
+    render(<App />);
 
+    const skills = screen.getByRole("region", { name: "What I work with" });
+    expect(within(skills).getByText("Multi-agent orchestration")).toBeInTheDocument();
+    expect(within(skills).getByText("Databricks Fundamentals")).toBeInTheDocument();
     expect(
-      screen.getAllByText("Southern Methodist University, Cox School of Business").length,
-    ).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("Databricks Fundamentals")).toBeInTheDocument();
+      within(skills).getByText(/Southern Methodist University/),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps private details and slop meta-content off the page", () => {
+    const { container } = render(<App />);
 
     expect(container.textContent).not.toMatch(/Tampa/i);
     expect(container.textContent).not.toMatch(/949\D*422\D*5080/);
     expect(container.textContent).not.toMatch(/aidan\.marshall25@outlook\.com/i);
-  });
-
-  it("renders a tile-based technical surface with a performance-conscious shader field", () => {
-    render(<App />);
-
-    expect(screen.getByTestId("tile-console")).toBeInTheDocument();
-    expect(screen.getAllByTestId("entity-tile").length).toBeGreaterThanOrEqual(10);
-    expect(
-      screen.getByLabelText("Performance-conscious WebGPU shader field"),
-    ).toHaveAttribute("data-renderer-state", "booting");
-    expect(screen.getByRole("heading", { name: "Index graph running" })).toBeInTheDocument();
-    expect(screen.getByText("Booting GPU graph")).toBeInTheDocument();
-    expect(screen.getByText(/draws the reconciliation path/i)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Reconcile these profiles" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "30 FPS cap" })).toBeInTheDocument();
-    expect(screen.getByText(/WebGPU only runs when visible/i)).toBeInTheDocument();
-    expect(screen.getByText("ProfilePage + Person JSON-LD")).toBeInTheDocument();
+    expect(container.textContent).not.toMatch(/WebGPU/i);
+    expect(container.textContent).not.toMatch(/entity file/i);
+    expect(container.textContent).not.toMatch(/30 FPS/i);
   });
 });

@@ -8,11 +8,14 @@ export type Profile = {
   domain: string;
   canonicalUrl: string;
   location: string;
+  /** Short role label used in the eyebrow and structured data. */
+  role: string;
+  /** One-line positioning statement shown under the name. */
   headline: string;
-  summary: string;
-  currentRole: string;
+  /** A human, first-person paragraph introducing the work. */
+  intro: string;
+  currentTitle: string;
   currentOrganization: string;
-  priorOrganization: string;
   education: string;
   links: ExternalLinks;
   skills: string[];
@@ -36,12 +39,9 @@ export type Project = {
   category: string;
   description: string;
   technologies: string[];
-};
-
-export type Writing = {
-  title: string;
-  profileUrl: string;
-  description: string;
+  /** Optional link to a public repo or live build. */
+  url?: string;
+  linkLabel?: string;
 };
 
 export const profile: Profile = {
@@ -49,113 +49,123 @@ export const profile: Profile = {
   domain: "aidanmarshall.ai",
   canonicalUrl: "https://aidanmarshall.ai/",
   location: "Dallas, TX",
+  role: "AI Engineer",
   headline:
-    "Dallas-based AI engineer building agentic systems, enterprise automation, and open-source AI tools.",
-  summary:
-    "This is the public record for Aidan Marshall: current AI engineering work, open-source code, LinkedIn writing, credentials, and the profiles search engines should reconcile.",
-  currentRole: "Senior Associate Native AI Engineer",
-  currentOrganization: "PwC (C2H Brooksource)",
-  priorOrganization: "IBM",
+    "I build agentic AI systems and the enterprise automation around them — multi-agent orchestration, production tooling, and AI-assisted development that ships.",
+  intro:
+    "I'm an AI engineer focused on taking agentic systems from prototype to production inside large, regulated organizations. Most of my work lives where autonomous AI meets real governance: legal, tax, and compliance platforms where the system has to be useful and trustworthy at the same time.",
+  currentTitle: "Senior AI Engineer",
+  currentOrganization: "PwC",
   education: "Southern Methodist University, Cox School of Business",
   links: {
     linkedin: "https://www.linkedin.com/in/aidan-marshall77",
     github: "https://github.com/Aidan2111",
   },
   skills: [
-    "AI agents",
     "Agentic AI architecture",
-    "Enterprise automation",
     "Multi-agent orchestration",
-    "Azure OpenAI",
-    "Google ADK",
-    "Claude SDK",
-    "Harvey AI",
-    "Model Context Protocol",
-    "React",
-    "TypeScript",
+    "Google ADK & Claude SDK",
+    "Harvey AI integration",
+    "Azure OpenAI & AI Foundry",
+    "Model Context Protocol (MCP)",
     "Python",
-    "Databricks",
+    "React & TypeScript",
+    "Micro-frontend integration",
+    "Cloud solutions architecture",
+    "AI-assisted development",
+    "Enterprise governance & compliance",
   ],
 };
 
 export const focusAreas: FocusArea[] = [
   {
-    label: "Current work",
+    label: "Agentic systems",
     description:
-      "Senior Associate Native AI Engineer work connected to agentic systems, enterprise automation, and AI-assisted development.",
+      "Architecting and scaling multi-agent systems with Google ADK and the Claude SDK, integrated into enterprise platforms rather than left in a notebook.",
   },
   {
-    label: "Public code",
+    label: "Enterprise AI delivery",
     description:
-      "GitHub projects under Aidan2111, with public work prepared as the durable proof layer for this identity page.",
+      "Shipping production AI into regulated environments — legal, tax, and compliance — where governance, cost, and reliability are first-class requirements.",
   },
   {
-    label: "Writing trail",
+    label: "AI-assisted development",
     description:
-      "LinkedIn posts and articles that connect the same name to AI systems, automation, and practical workflow work.",
+      "Building the workflows and tooling around Cursor, Claude, and Copilot that measurably shorten the SDLC and make engineering teams faster.",
   },
 ];
 
 export const roles: Role[] = [
   {
-    title: "Senior Associate Native AI Engineer",
+    title: "Senior AI Engineer",
     organization: "PwC (C2H Brooksource)",
     location: "Dallas, TX",
-    period: "March 2026 to present",
+    period: "Mar 2026 — Present",
     highlights: [
-      "Architects and scales agentic AI systems using Google ADK and Claude SDK.",
-      "Works on Harvey AI integration, system design, and data pipelines for specialized legal and compliance AI capabilities.",
-      "Builds AI-assisted development workflows using Cursor, Claude, and GitHub Copilot.",
-      "Maps agentic compute costs against output to evaluate productivity, ROI, and resource allocation.",
+      "Architected and scaled agentic AI systems with Google ADK and the Claude SDK, integrating autonomous workflows into a globally distributed enterprise platform generating over $5B in annual revenue.",
+      "Led the 0-to-1 integration of Harvey AI into the core product, owning end-to-end system design and the data pipelines behind specialized legal and compliance capabilities.",
+      "Designed a composite-weight system that maps real-time agentic compute cost against output to track developer productivity and optimize ROI and resource allocation.",
+      "Pioneered AI-assisted development workflows (Cursor, Claude, Copilot) and rapid-prototyping frameworks that shortened the SDLC and lifted cross-functional team velocity.",
     ],
   },
   {
-    title: "AI Engineer - One Microsoft Practice Innovation",
+    title: "AI Engineer — One Microsoft Practice Innovation",
     organization: "IBM",
     location: "Dallas, TX",
-    period: "June 2025 to March 2026",
+    period: "Jun 2025 — Mar 2026",
     highlights: [
-      "Delivered Agentic AI solutions for enterprise tax technology contexts using Azure OpenAI services.",
-      "Orchestrated multi-agent workflows through Model Context Protocol servers under governance and compliance standards.",
-      "Built client-facing AI prototypes that showcased IBM and Neudesic innovation work.",
-      "Validated agentic patterns, tool integrations, state flows, and orchestration approaches for client roadmaps.",
+      "Delivered enterprise-grade agentic AI for a Fortune-level tax enterprise, integrating Azure OpenAI and orchestrating multi-agent workflows over Model Context Protocol (MCP) servers under strict governance and compliance standards.",
+      "Architected interactive agentic AI prototypes that showcased IBM and Neudesic's innovation pipeline and drove high-value, client-facing engagements and proofs-of-concept.",
+      "Ran internal engineering experiments validating agentic patterns, tool integrations, and custom state and orchestration flows to future-proof client technology roadmaps.",
     ],
   },
 ];
 
 export const projects: Project[] = [
   {
-    name: "Autonomous Native AI Mobile Navigation Agent",
-    category: "Claude Code and iOS",
+    name: "Agent Autonomy Score",
+    category: "Open source · Python",
     description:
-      "An iOS app concept for the Newport Beach Boat Show with an embedded multimodal AI assistant that interprets user intent and navigates app UI.",
-    technologies: ["Claude Code", "iOS", "Multimodal AI", "Mobile automation"],
+      "A risk-scoring system that decides how much human supervision an AI coding agent needs before it acts — bringing measurable governance to autonomous development.",
+    technologies: ["Python", "Agentic AI", "Risk scoring"],
+    url: "https://github.com/Aidan2111/agent-autonomy-score",
+    linkLabel: "View repo",
   },
   {
     name: "Sentiment-Driven Quantitative Carry Trade Model",
-    category: "Python and Scikit-Learn",
+    category: "Open source · Python",
     description:
-      "An algorithmic carry-trade model across USD, EUR, and Ukrainian Hryvnia with an ML regression pipeline that reallocates capital using news sentiment signals.",
-    technologies: ["Python", "Scikit-Learn", "Machine learning", "Sentiment analysis"],
+      "A carry-trade forecasting model across USD, EUR, and the Ukrainian Hryvnia that pairs a machine-learning ensemble with real-time news-sentiment signals, surfaced through a React and TypeScript dashboard.",
+    technologies: ["Python", "scikit-learn", "React", "TypeScript"],
+    url: "https://github.com/Aidan2111/carry-trade-model",
+    linkLabel: "View repo",
   },
   {
-    name: "AI-Driven Professional Growth and Insights Platform",
-    category: "Web app",
+    name: "Autonomous Native AI Mobile Navigation Agent",
+    category: "Claude Code · iOS",
     description:
-      "A personalized web app concept for surfacing AI and technology trends by role, with workflow mapping for adopting relevant AI tools.",
-    technologies: ["Web app", "AI trends", "Workflow mapping", "Personalization"],
+      "An iOS app for the Newport Beach Boat Show with an embedded multimodal assistant that interprets user intent and autonomously navigates the app's interface.",
+    technologies: ["Claude Code", "iOS", "Multimodal AI"],
   },
 ];
 
-export const writing: Writing = {
-  title: "LinkedIn articles and field notes",
-  profileUrl: profile.links.linkedin,
+export const writing = {
+  title: "Writing on AI in the real world",
   description:
-    "Articles and posts on AI systems, enterprise automation, and practical agentic workflows are published through LinkedIn.",
+    "I write about agentic AI, enterprise automation, and what actually works when these systems leave the demo and go into production. Latest posts and articles live on LinkedIn.",
+  url: profile.links.linkedin,
+  cta: "Read on LinkedIn",
 };
 
-export const proofStack = [
-  "Southern Methodist University, Cox School of Business",
+export const openSource = {
+  title: "Open source & experiments",
+  description:
+    "Project code, prototypes, and the experiments behind the writing — published openly on GitHub.",
+  url: profile.links.github,
+  cta: "View on GitHub",
+};
+
+export const certifications = [
   "Microsoft Agentic AI Solution Architect (AB-100)",
   "Microsoft AI Engineer (AI-102)",
   "Microsoft Azure Fundamentals",
@@ -163,19 +173,9 @@ export const proofStack = [
   "GitHub Copilot",
 ];
 
-export const deploymentChecklist = [
-  "Buy aidanmarshall.ai",
-  "Deploy the static site to a public host",
-  "Point aidanmarshall.ai DNS to the host",
-  "Add https://aidanmarshall.ai to Google Search Console",
-  "Submit https://aidanmarshall.ai/sitemap.xml",
-  "Use URL Inspection after deployment",
-  "Validate structured data with Google's Rich Results Test",
-];
-
 export const navigationItems = [
   { label: "Work", href: "#work" },
   { label: "Projects", href: "#projects" },
   { label: "Writing", href: "#writing" },
-  { label: "Proof", href: "#proof" },
+  { label: "Contact", href: "#contact" },
 ];

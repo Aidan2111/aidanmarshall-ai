@@ -1,74 +1,92 @@
-import { profile } from "./content";
+import { certifications, profile, projects, roles } from "./content";
 
 export const siteTitle =
-  "Aidan Marshall | AI Systems, Agentic Workflows, and Open Source";
+  "Aidan Marshall — AI Engineer | Agentic Systems & Enterprise Automation";
 
 export const siteDescription =
-  "Public identity page for Aidan Marshall, a Dallas-based AI engineer working on agentic systems, enterprise automation, open-source code, and LinkedIn writing.";
+  "Aidan Marshall is a Dallas-based AI engineer building agentic AI systems and enterprise automation: multi-agent orchestration, AI-assisted development, and production AI for regulated industries like legal, tax, and compliance.";
 
 export const canonicalUrl = profile.canonicalUrl;
 
-export type ProfilePageSchema = {
+export const socialImage = "https://aidanmarshall.ai/og.png";
+
+const personId = "https://aidanmarshall.ai/#person";
+const profilePageId = "https://aidanmarshall.ai/#profile";
+const websiteId = "https://aidanmarshall.ai/#website";
+
+type JsonLdNode = Record<string, unknown>;
+
+export type ProfileSchema = {
   "@context": "https://schema.org";
-  "@type": "ProfilePage";
-  "@id": string;
-  url: string;
-  name: string;
-  description: string;
-  mainEntity: {
-    "@type": "Person";
-    "@id": string;
-    name: string;
-    url: string;
-    description: string;
-    jobTitle: string;
-    sameAs: string[];
-    worksFor: {
-      "@type": "Organization";
-      name: string;
-    };
-    homeLocation: {
-      "@type": "Place";
-      name: string;
-    };
-    alumniOf: {
-      "@type": "CollegeOrUniversity";
-      name: string;
-    };
-    knowsAbout: string[];
-  };
+  "@graph": JsonLdNode[];
 };
 
-export function buildProfilePageSchema(): ProfilePageSchema {
+/**
+ * A linked-data graph describing Aidan Marshall as a Person, the site as a
+ * WebSite, and the homepage as a ProfilePage. This is what search engines and
+ * LLM crawlers read to resolve the entity behind aidanmarshall.ai.
+ */
+export function buildProfilePageSchema(): ProfileSchema {
+  const person: JsonLdNode = {
+    "@type": "Person",
+    "@id": personId,
+    name: profile.name,
+    url: profile.canonicalUrl,
+    description: profile.headline,
+    jobTitle: profile.currentTitle,
+    knowsAbout: profile.skills,
+    sameAs: [profile.links.linkedin, profile.links.github],
+    worksFor: {
+      "@type": "Organization",
+      name: profile.currentOrganization,
+    },
+    homeLocation: {
+      "@type": "Place",
+      name: profile.location,
+    },
+    alumniOf: {
+      "@type": "CollegeOrUniversity",
+      name: profile.education,
+    },
+    hasOccupation: roles.map((role) => ({
+      "@type": "Occupation",
+      name: role.title,
+      occupationLocation: { "@type": "Place", name: role.location },
+    })),
+    hasCredential: certifications.map((credential) => ({
+      "@type": "EducationalOccupationalCredential",
+      name: credential,
+    })),
+  };
+
   return {
     "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    "@id": "https://aidanmarshall.ai/#profile",
-    url: profile.canonicalUrl,
-    name: `${profile.name} profile`,
-    description: siteDescription,
-    mainEntity: {
-      "@type": "Person",
-      "@id": "https://aidanmarshall.ai/#person",
-      name: profile.name,
-      url: profile.canonicalUrl,
-      description: profile.headline,
-      jobTitle: profile.currentRole,
-      sameAs: [profile.links.linkedin, profile.links.github],
-      worksFor: {
-        "@type": "Organization",
-        name: profile.currentOrganization,
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": websiteId,
+        url: profile.canonicalUrl,
+        name: `${profile.name} — ${profile.role}`,
+        description: siteDescription,
+        about: { "@id": personId },
+        publisher: { "@id": personId },
       },
-      homeLocation: {
-        "@type": "Place",
-        name: profile.location,
+      person,
+      {
+        "@type": "ProfilePage",
+        "@id": profilePageId,
+        url: profile.canonicalUrl,
+        name: `${profile.name} — ${profile.role}`,
+        description: siteDescription,
+        isPartOf: { "@id": websiteId },
+        about: { "@id": personId },
+        mainEntity: { "@id": personId },
+        keywords: [
+          ...profile.skills,
+          ...projects.map((project) => project.name),
+        ],
       },
-      alumniOf: {
-        "@type": "CollegeOrUniversity",
-        name: profile.education,
-      },
-      knowsAbout: profile.skills,
-    },
+    ],
   };
 }
 
@@ -76,14 +94,19 @@ export function injectDocumentMetadata() {
   document.title = siteTitle;
 
   setMeta("description", siteDescription);
+  setMeta("author", profile.name);
   setLink("canonical", canonicalUrl);
   setMeta("og:type", "profile", "property");
+  setMeta("og:site_name", profile.domain, "property");
+  setMeta("og:locale", "en_US", "property");
   setMeta("og:title", siteTitle, "property");
   setMeta("og:description", siteDescription, "property");
   setMeta("og:url", canonicalUrl, "property");
+  setMeta("og:image", socialImage, "property");
   setMeta("twitter:card", "summary_large_image");
   setMeta("twitter:title", siteTitle);
   setMeta("twitter:description", siteDescription);
+  setMeta("twitter:image", socialImage);
 }
 
 function setMeta(name: string, content: string, attribute: "name" | "property" = "name") {
