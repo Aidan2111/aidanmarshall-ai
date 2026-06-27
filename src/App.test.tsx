@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import App from "./App";
-import { profile } from "./content";
+import { articles, profile } from "./content";
 
 describe("Aidan Marshall landing page", () => {
   it("leads with the name, role, and positioning", () => {
@@ -12,6 +12,10 @@ describe("Aidan Marshall landing page", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(profile.headline)).toBeInTheDocument();
     expect(screen.getAllByText(/Dallas, TX/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByRole("img", { name: "Aidan Marshall" })).toHaveAttribute(
+      "src",
+      "/aidan-marshall-headshot.jpg",
+    );
     expect(screen.getByText(/AI Engineer · Dallas, TX/)).toBeInTheDocument();
   });
 
@@ -69,6 +73,8 @@ describe("Aidan Marshall landing page", () => {
     expect(
       within(share).getByRole("link", { name: /view on github/i }),
     ).toHaveAttribute("href", profile.links.github);
+    expect(within(share).getByText(articles[0].title)).toBeInTheDocument();
+    expect(within(share).getByText(/Autonomy should be treated/)).toBeInTheDocument();
   });
 
   it("renders skills, credentials, and education", () => {

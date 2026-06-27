@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  articles,
   certifications,
   focusAreas,
   openSource,
@@ -12,6 +13,7 @@ import {
 const payload = () =>
   JSON.stringify({
     certifications,
+    articles,
     focusAreas,
     openSource,
     profile,
@@ -29,6 +31,9 @@ describe("site content", () => {
       "https://www.linkedin.com/in/aidan-marshall77",
     );
     expect(profile.links.github).toBe("https://github.com/Aidan2111");
+    expect(profile.image).toBe(
+      "https://aidanmarshall.ai/aidan-marshall-headshot.jpg",
+    );
   });
 
   it("reflects the resume job title and education", () => {
@@ -51,6 +56,10 @@ describe("site content", () => {
   it("routes writing to LinkedIn and open source to GitHub", () => {
     expect(writing.url).toBe(profile.links.linkedin);
     expect(openSource.url).toBe(profile.links.github);
+    expect(articles.length).toBeGreaterThanOrEqual(3);
+    expect(articles.map((article) => article.title)).toContain(
+      "Agentic AI has to earn autonomy",
+    );
   });
 
   it("keeps at least three projects and the resume certifications", () => {

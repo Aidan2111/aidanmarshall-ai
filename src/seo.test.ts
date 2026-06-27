@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { projects, profile } from "./content";
+import { articles, projects, profile } from "./content";
 import {
   buildLlmsTxt,
   buildProfilePageSchema,
@@ -33,6 +33,7 @@ describe("structured data and metadata", () => {
     expect(person["@id"]).toBe("https://aidanmarshall.ai/#person");
     expect(person.name).toBe("Aidan Marshall");
     expect(person.url).toBe(profile.canonicalUrl);
+    expect(person.image).toBe(profile.image);
     expect(person.jobTitle).toBe("Senior AI Engineer");
     expect(person.worksFor.name).toBe("PwC");
     expect(person.homeLocation.name).toBe("Dallas, TX");
@@ -88,6 +89,19 @@ describe("structured data and metadata", () => {
       "https://github.com/Aidan2111/agent-autonomy-score",
     );
   });
+
+  it("publishes owned-domain writing as Article structured data", () => {
+    const articleNodes = nodesOfType("Article");
+    expect(articleNodes.length).toBe(articles.length);
+    expect(articleNodes.map((article) => article.headline)).toContain(
+      "Agentic AI has to earn autonomy",
+    );
+    for (const article of articleNodes) {
+      expect(article.author["@id"]).toBe("https://aidanmarshall.ai/#person");
+      expect(article.image).toBe(profile.image);
+      expect(article.mainEntityOfPage).toBe("https://aidanmarshall.ai/#writing");
+    }
+  });
 });
 
 describe("llms.txt", () => {
@@ -101,8 +115,12 @@ describe("llms.txt", () => {
   it("lists experience, projects, and canonical links", () => {
     expect(text).toContain("## Experience");
     expect(text).toContain("## Projects");
+    expect(text).toContain("## Writing");
     for (const project of projects) {
       expect(text).toContain(project.name);
+    }
+    for (const article of articles) {
+      expect(text).toContain(article.title);
     }
     expect(text).toContain(profile.links.linkedin);
     expect(text).toContain(profile.links.github);

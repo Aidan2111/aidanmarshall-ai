@@ -7,6 +7,8 @@ export type Profile = {
   name: string;
   domain: string;
   canonicalUrl: string;
+  image: string;
+  avatar: string;
   location: string;
   /** Short role label used in the eyebrow and structured data. */
   role: string;
@@ -44,10 +46,22 @@ export type Project = {
   linkLabel?: string;
 };
 
+export type Article = {
+  id: string;
+  title: string;
+  dek: string;
+  datePublished: string;
+  readingTime: string;
+  keywords: string[];
+  body: string[];
+};
+
 export const profile: Profile = {
   name: "Aidan Marshall",
   domain: "aidanmarshall.ai",
   canonicalUrl: "https://aidanmarshall.ai/",
+  image: "https://aidanmarshall.ai/aidan-marshall-headshot.jpg",
+  avatar: "https://aidanmarshall.ai/aidan-marshall-avatar.jpg",
   location: "Dallas, TX",
   role: "AI Engineer",
   headline:
@@ -174,7 +188,7 @@ export const projects: Project[] = [
 export const writing = {
   title: "Writing on AI in the real world",
   description:
-    "I write about agentic AI, enterprise automation, and what actually works when these systems leave the demo and go into production. Latest posts and articles live on LinkedIn.",
+    "I write about agentic AI, enterprise automation, and what actually works when these systems leave the demo and go into production. This site is the canonical home for that work, with LinkedIn as the distribution channel.",
   url: profile.links.linkedin,
   cta: "Read on LinkedIn",
 };
@@ -193,6 +207,66 @@ export const certifications = [
   "Microsoft Azure Fundamentals",
   "Databricks Fundamentals",
   "GitHub Copilot",
+];
+
+export const articles: Article[] = [
+  {
+    id: "agentic-ai-has-to-earn-autonomy",
+    title: "Agentic AI has to earn autonomy",
+    dek:
+      "The useful question is not whether an agent can act. It is when the system can prove that it deserves more room to act.",
+    datePublished: "2026-06-27",
+    readingTime: "3 min read",
+    keywords: [
+      "Agentic AI",
+      "AI governance",
+      "Autonomous agents",
+      "AI-assisted development",
+    ],
+    body: [
+      "Autonomy should be treated as a measured privilege, not a default setting. In regulated environments, the agent's technical capability is only one part of the decision. The system also needs a clear view of task risk, reversibility, confidence, cost, and the blast radius of a bad action.",
+      "That is the idea behind Agent Autonomy Score: make supervision a first-class control. Low-risk, reversible work can move quickly. High-risk work should slow down, ask for review, or provide a stronger audit trail before it touches production systems or client-facing workflows.",
+      "The teams that win with agentic AI will not be the ones that give every model unlimited agency. They will be the ones that can explain why an agent was allowed to act, when it was stopped, and what evidence the system used to make that call.",
+    ],
+  },
+  {
+    id: "event-driven-multi-agent-systems",
+    title: "Multi-agent systems should not depend on direct handoffs",
+    dek:
+      "Event-driven architecture gives AI agents a cleaner way to coordinate, fail, recover, and evolve inside real enterprise platforms.",
+    datePublished: "2026-06-27",
+    readingTime: "4 min read",
+    keywords: [
+      "Multi-agent orchestration",
+      "Event-driven architecture",
+      "Azure Service Bus",
+      "Kafka",
+    ],
+    body: [
+      "Most early multi-agent prototypes wire agents together with direct calls: planner calls researcher, researcher calls analyst, analyst calls writer. That works for demos, but it creates brittle dependency chains as soon as the system needs reliability, observability, or live upgrades.",
+      "An event-driven model is a better fit for production. Agents subscribe to the work they understand and emit structured events when they complete, fail, escalate, or need more context. That makes it possible to add a new specialist agent, replace an expensive model, or replay a workflow without redeploying the entire system.",
+      "For enterprise AI, the architecture around the model matters as much as the model itself. Service buses, durable queues, event envelopes, registries, and cost telemetry are what turn a clever agent chain into software that can survive real usage.",
+    ],
+  },
+  {
+    id: "ai-assisted-development-operating-model",
+    title: "AI-assisted development is an operating model",
+    dek:
+      "Cursor, Claude, Copilot, and custom agents are most valuable when they become part of a governed engineering workflow instead of a side tool.",
+    datePublished: "2026-06-27",
+    readingTime: "3 min read",
+    keywords: [
+      "AI-assisted development",
+      "Developer productivity",
+      "Enterprise automation",
+      "LLMOps",
+    ],
+    body: [
+      "The best AI-assisted development work is not about asking a model for code and hoping the patch is good. It is about designing the workflow around the model: what context it receives, what tools it can call, what checks run automatically, and where humans review the result.",
+      "Inside large organizations, that workflow has to account for governance, cost, security, and team adoption. The point is not to replace engineering judgment. The point is to compress the boring parts of implementation while making the review surface clearer and more measurable.",
+      "The practical metric is whether the system helps teams ship reliable software faster. That means tracking more than token spend or lines of code. It means connecting agentic compute to outcomes: cycle time, review burden, defect rate, and how often the automation makes a human decision easier.",
+    ],
+  },
 ];
 
 export const navigationItems = [

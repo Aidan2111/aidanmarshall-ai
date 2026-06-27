@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  articles,
   certifications,
   focusAreas,
   navigationItems,
@@ -40,6 +41,14 @@ export default function App() {
             <span className="sep"> · </span>
             Previously IBM
           </p>
+          <figure className="hero-portrait">
+            <img
+              src="/aidan-marshall-headshot.jpg"
+              alt="Aidan Marshall"
+              width="1200"
+              height="1200"
+            />
+          </figure>
         </section>
 
         <section className="focus" aria-label="How I work">
@@ -125,6 +134,28 @@ export default function App() {
               </a>
             </article>
           </div>
+          <div className="article-list" aria-label="Writing by Aidan Marshall">
+            {articles.map((article) => (
+              <article className="article-card" id={article.id} key={article.id}>
+                <div className="article-meta">
+                  <time dateTime={article.datePublished}>{formatDate(article.datePublished)}</time>
+                  <span>{article.readingTime}</span>
+                </div>
+                <h3>{article.title}</h3>
+                <p className="article-dek">{article.dek}</p>
+                <div className="article-body">
+                  {article.body.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
+                <ul className="tags" aria-label={`${article.title} topics`}>
+                  {article.keywords.map((keyword) => (
+                    <li key={keyword}>{keyword}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
         </Section>
 
         <Section id="skills" eyebrow="Capabilities" title="What I work with">
@@ -180,6 +211,15 @@ export default function App() {
       </footer>
     </>
   );
+}
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${value}T00:00:00Z`));
 }
 
 function SiteHeader() {

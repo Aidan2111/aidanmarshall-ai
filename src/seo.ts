@@ -1,4 +1,4 @@
-import { certifications, profile, projects, roles } from "./content";
+import { articles, certifications, profile, projects, roles } from "./content";
 
 export const siteTitle =
   "Aidan Marshall — AI Engineer | Agentic Systems & Enterprise Automation";
@@ -9,6 +9,7 @@ export const siteDescription =
 export const canonicalUrl = profile.canonicalUrl;
 
 export const socialImage = "https://aidanmarshall.ai/og.png";
+export const profileImage = profile.image;
 
 const personId = "https://aidanmarshall.ai/#person";
 const profilePageId = "https://aidanmarshall.ai/#profile";
@@ -32,7 +33,7 @@ export function buildProfilePageSchema(): ProfileSchema {
     "@id": personId,
     name: profile.name,
     url: profile.canonicalUrl,
-    image: socialImage,
+    image: profileImage,
     mainEntityOfPage: { "@id": profilePageId },
     description: profile.headline,
     jobTitle: profile.currentTitle,
@@ -84,6 +85,21 @@ export function buildProfilePageSchema(): ProfileSchema {
     return node;
   });
 
+  const articleWorks: JsonLdNode[] = articles.map((article) => ({
+    "@type": "Article",
+    "@id": `${profile.canonicalUrl}#${article.id}`,
+    headline: article.title,
+    description: article.dek,
+    datePublished: article.datePublished,
+    author: { "@id": personId },
+    creator: { "@id": personId },
+    publisher: { "@id": personId },
+    image: profileImage,
+    keywords: article.keywords,
+    isPartOf: { "@id": websiteId },
+    mainEntityOfPage: `${profile.canonicalUrl}#writing`,
+  }));
+
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -111,9 +127,21 @@ export function buildProfilePageSchema(): ProfileSchema {
         keywords: [
           ...profile.skills,
           ...projects.map((project) => project.name),
+          ...articles.map((article) => article.title),
         ],
       },
+      {
+        "@type": "Blog",
+        "@id": `${profile.canonicalUrl}#writing`,
+        url: `${profile.canonicalUrl}#writing`,
+        name: `${profile.name} writing`,
+        inLanguage: "en-US",
+        author: { "@id": personId },
+        publisher: { "@id": personId },
+        blogPost: articleWorks.map((article) => ({ "@id": article["@id"] })),
+      },
       ...projectWorks,
+      ...articleWorks,
     ],
   };
 }
@@ -153,6 +181,19 @@ export function buildLlmsTxt(): string {
   for (const project of projects) {
     const link = project.url ? ` (${project.url})` : "";
     lines.push(`- **${project.name}**${link} — ${project.description}`);
+  }
+
+  lines.push("");
+  lines.push("## Writing");
+  for (const article of articles) {
+    lines.push("");
+    lines.push(`### ${article.title}`);
+    lines.push(`${article.datePublished} - ${article.readingTime}`);
+    lines.push(article.dek);
+    for (const paragraph of article.body) {
+      lines.push("");
+      lines.push(paragraph);
+    }
   }
 
   lines.push("");

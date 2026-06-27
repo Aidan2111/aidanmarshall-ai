@@ -1,15 +1,15 @@
 # aidanmarshall.ai
 
-Personal landing page for Aidan Marshall — an AI engineer building agentic systems and enterprise automation. The site presents experience, projects, writing, and ways to connect, and is built so search engines and LLMs can resolve the entity cleanly.
+Canonical personal site for [Aidan Marshall](https://aidanmarshall.ai/), a Dallas-based AI engineer building agentic systems and enterprise automation. The site presents experience, projects, owned-domain writing, and public profile links so search engines and AI assistants can resolve the Aidan Marshall entity cleanly.
 
 ## What This Includes
 
 - Vite, React, and TypeScript site
 - Prerendered static HTML so crawlers and AI scrapers read full content without running JavaScript
-- `Person` + `ProfilePage` + `WebSite` JSON-LD graph, with LinkedIn and GitHub as `sameAs` links
-- Human-readable sections: hero, experience, projects, writing, capabilities, and contact
-- A subtle, decorative ambient background (WebGPU with a canvas fallback, disabled under reduced-motion)
-- `robots.txt` and `sitemap.xml`
+- `Person`, `ProfilePage`, `WebSite`, `Blog`, and `Article` JSON-LD linked back to the same person entity
+- Human-readable sections: hero with headshot, experience, projects, writing/articles, capabilities, and contact
+- Real headshot and social preview image
+- `robots.txt`, `sitemap.xml`, and `llms.txt`
 - GitHub Actions deployment to GitHub Pages
 
 ## Local Development
@@ -32,28 +32,22 @@ npm test
 npm run build
 ```
 
-The build step runs Vite and then prerenders the React page into `dist/index.html`, including the JSON-LD schema.
+The build step runs Vite and then prerenders the React page into `dist/index.html`, including the JSON-LD schema and `llms.txt`.
 
 ## GitHub Pages Deployment
 
-Pushing to `main` runs `.github/workflows/deploy-pages.yml`.
+Pushing to `main` runs `.github/workflows/deploy-pages.yml` and deploys to:
 
-The workflow:
+```text
+https://aidanmarshall.ai/
+```
 
-- installs dependencies with `npm ci`
-- runs `npm test`
-- builds with `GITHUB_PAGES=true`
-- uploads `dist`
-- deploys through GitHub Pages
+The custom domain is configured through GitHub Pages with HTTPS enforced.
 
-The GitHub Pages URL can be used as a temporary preview before `aidanmarshall.ai` is purchased and connected.
+## Public Identity Targets
 
-## Domain Launch Steps
-
-1. Buy `aidanmarshall.ai`.
-2. Add the domain in the repository's GitHub Pages settings.
-3. Add the DNS records GitHub provides.
-4. Add `https://aidanmarshall.ai` to Google Search Console.
-5. Submit `https://aidanmarshall.ai/sitemap.xml`.
-6. Use URL Inspection after DNS and deployment are live.
-7. Validate the homepage with Google's Rich Results Test.
+- Website: https://aidanmarshall.ai/
+- LinkedIn: https://www.linkedin.com/in/aidan-marshall77
+- GitHub: https://github.com/Aidan2111
+- Sitemap: https://aidanmarshall.ai/sitemap.xml
+- LLM summary: https://aidanmarshall.ai/llms.txt
