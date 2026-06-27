@@ -1,10 +1,10 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
-const base = process.env.GITHUB_PAGES === "true" ? "/aidanmarshall-ai/" : "/";
-
+// The site is served from the root of the custom domain (aidanmarshall.ai),
+// so assets resolve from "/".
 export default defineConfig({
-  base,
+  base: "/",
   plugins: [react()],
   test: {
     environment: "jsdom",
