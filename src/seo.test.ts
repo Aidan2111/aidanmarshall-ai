@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { profile } from "./content";
-import { buildProfilePageSchema, siteDescription, siteTitle } from "./seo";
+import { projects, profile } from "./content";
+import {
+  buildLlmsTxt,
+  buildProfilePageSchema,
+  siteDescription,
+  siteTitle,
+} from "./seo";
 
 type Node = Record<string, any>;
 
@@ -9,6 +14,11 @@ const nodeOfType = (type: string): Node => {
   const node = schema["@graph"].find((entry) => (entry as Node)["@type"] === type);
   expect(node, `expected a ${type} node in the graph`).toBeDefined();
   return node as Node;
+};
+
+const nodesOfType = (type: string): Node[] => {
+  const schema = buildProfilePageSchema();
+  return schema["@graph"].filter((entry) => (entry as Node)["@type"] === type) as Node[];
 };
 
 describe("structured data and metadata", () => {
@@ -58,5 +68,44 @@ describe("structured data and metadata", () => {
     expect(siteTitle).toContain("AI Engineer");
     expect(siteDescription).toContain("Dallas-based AI engineer");
     expect(siteDescription).toContain("agentic");
+  });
+
+  it("publishes every project as a work authored by the Person", () => {
+    const works = [
+      ...nodesOfType("SoftwareSourceCode"),
+      ...nodesOfType("CreativeWork"),
+    ];
+    expect(works.length).toBe(projects.length);
+    for (const work of works) {
+      expect(work.author["@id"]).toBe("https://aidanmarshall.ai/#person");
+      expect(typeof work.name).toBe("string");
+      expect(typeof work.description).toBe("string");
+    }
+    const repoWork = nodesOfType("SoftwareSourceCode").find(
+      (work) => work.name === "Agent Autonomy Score",
+    );
+    expect(repoWork?.codeRepository).toBe(
+      "https://github.com/Aidan2111/agent-autonomy-score",
+    );
+  });
+});
+
+describe("llms.txt", () => {
+  const text = buildLlmsTxt();
+
+  it("leads with the person and a one-line summary", () => {
+    expect(text.startsWith("# Aidan Marshall")).toBe(true);
+    expect(text).toContain(`> ${profile.headline}`);
+  });
+
+  it("lists experience, projects, and canonical links", () => {
+    expect(text).toContain("## Experience");
+    expect(text).toContain("## Projects");
+    for (const project of projects) {
+      expect(text).toContain(project.name);
+    }
+    expect(text).toContain(profile.links.linkedin);
+    expect(text).toContain(profile.links.github);
+    expect(text).toContain(profile.canonicalUrl);
   });
 });

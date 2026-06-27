@@ -1,4 +1,48 @@
+# aidanmarshall.ai — open to search engines and AI crawlers.
+# Structured data: JSON-LD in the page <head>. LLM summary: /llms.txt
+
 User-agent: *
+Allow: /
+
+# Search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# AI assistants and LLM / training crawlers (explicitly welcomed)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: CCBot
 Allow: /
 
 Sitemap: https://aidanmarshall.ai/sitemap.xml

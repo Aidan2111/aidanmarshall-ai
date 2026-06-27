@@ -32,6 +32,8 @@ export function buildProfilePageSchema(): ProfileSchema {
     "@id": personId,
     name: profile.name,
     url: profile.canonicalUrl,
+    image: socialImage,
+    mainEntityOfPage: { "@id": profilePageId },
     description: profile.headline,
     jobTitle: profile.currentTitle,
     knowsAbout: profile.skills,
@@ -59,6 +61,29 @@ export function buildProfilePageSchema(): ProfileSchema {
     })),
   };
 
+  // Each project becomes a CreativeWork (or SoftwareSourceCode when a public
+  // repo exists) authored by the Person, so crawlers and LLMs can resolve the
+  // body of work back to the same entity.
+  const projectWorks: JsonLdNode[] = projects.map((project, index) => {
+    const node: JsonLdNode = {
+      "@type": project.url ? "SoftwareSourceCode" : "CreativeWork",
+      "@id": `${profile.canonicalUrl}#project-${index + 1}`,
+      name: project.name,
+      description: project.description,
+      keywords: project.technologies.join(", "),
+      author: { "@id": personId },
+      creator: { "@id": personId },
+      isPartOf: { "@id": websiteId },
+    };
+
+    if (project.url) {
+      node.url = project.url;
+      node.codeRepository = project.url;
+    }
+
+    return node;
+  });
+
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -68,6 +93,7 @@ export function buildProfilePageSchema(): ProfileSchema {
         url: profile.canonicalUrl,
         name: `${profile.name} — ${profile.role}`,
         description: siteDescription,
+        inLanguage: "en-US",
         about: { "@id": personId },
         publisher: { "@id": personId },
       },
@@ -78,6 +104,7 @@ export function buildProfilePageSchema(): ProfileSchema {
         url: profile.canonicalUrl,
         name: `${profile.name} — ${profile.role}`,
         description: siteDescription,
+        inLanguage: "en-US",
         isPartOf: { "@id": websiteId },
         about: { "@id": personId },
         mainEntity: { "@id": personId },
@@ -86,8 +113,70 @@ export function buildProfilePageSchema(): ProfileSchema {
           ...projects.map((project) => project.name),
         ],
       },
+      ...projectWorks,
     ],
   };
+}
+
+/**
+ * A plain-markdown summary of the site for LLM crawlers and AI assistants,
+ * following the llms.txt convention (https://llmstxt.org). Served at /llms.txt
+ * and generated from the same content model as the page, so the two never
+ * drift apart.
+ */
+export function buildLlmsTxt(): string {
+  const lines: string[] = [];
+
+  lines.push(`# ${profile.name}`);
+  lines.push("");
+  lines.push(`> ${profile.headline}`);
+  lines.push("");
+  lines.push(profile.intro);
+  lines.push("");
+  lines.push(
+    `${profile.name} is currently ${profile.currentTitle} at ${profile.currentOrganization}, based in ${profile.location}. This file summarizes his work, projects, skills, and links for AI assistants and search crawlers.`,
+  );
+
+  lines.push("");
+  lines.push("## Experience");
+  for (const role of roles) {
+    lines.push("");
+    lines.push(`### ${role.title} — ${role.organization} (${role.period})`);
+    lines.push(`Location: ${role.location}`);
+    for (const highlight of role.highlights) {
+      lines.push(`- ${highlight}`);
+    }
+  }
+
+  lines.push("");
+  lines.push("## Projects");
+  for (const project of projects) {
+    const link = project.url ? ` (${project.url})` : "";
+    lines.push(`- **${project.name}**${link} — ${project.description}`);
+  }
+
+  lines.push("");
+  lines.push("## Skills");
+  lines.push(profile.skills.join(", "));
+
+  lines.push("");
+  lines.push("## Certifications");
+  for (const credential of certifications) {
+    lines.push(`- ${credential}`);
+  }
+
+  lines.push("");
+  lines.push("## Education");
+  lines.push(`- ${profile.education} — BBA, Finance`);
+
+  lines.push("");
+  lines.push("## Links");
+  lines.push(`- Website: ${profile.canonicalUrl}`);
+  lines.push(`- LinkedIn: ${profile.links.linkedin}`);
+  lines.push(`- GitHub: ${profile.links.github}`);
+  lines.push("");
+
+  return lines.join("\n");
 }
 
 export function injectDocumentMetadata() {
