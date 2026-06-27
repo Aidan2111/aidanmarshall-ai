@@ -77,7 +77,7 @@ export default function App() {
           id="projects"
           eyebrow="Selected projects"
           title="Things I've built"
-          intro="A few projects that show the range — from autonomous mobile agents to quantitative models. More on GitHub."
+          intro="A few projects that show the range — from agent governance and multi-agent architecture to Azure AI Foundry systems and quantitative models. More on GitHub."
         >
           <div className="project-grid">
             {projects.map((project) => (

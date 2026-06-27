@@ -64,9 +64,10 @@ export const profile: Profile = {
   skills: [
     "Agentic AI architecture",
     "Multi-agent orchestration",
+    "Microsoft Agent Framework",
     "Google ADK & Claude SDK",
     "Harvey AI integration",
-    "Azure OpenAI & AI Foundry",
+    "Azure OpenAI & Microsoft Foundry",
     "Model Context Protocol (MCP)",
     "Python",
     "React & TypeScript",
@@ -114,7 +115,7 @@ export const roles: Role[] = [
     location: "Dallas, TX",
     period: "Jun 2025 — Mar 2026",
     highlights: [
-      "Delivered enterprise-grade agentic AI for a Fortune-level tax enterprise, integrating Azure OpenAI and orchestrating multi-agent workflows over Model Context Protocol (MCP) servers under strict governance and compliance standards.",
+      "Delivered enterprise-grade agentic AI for a Fortune-level tax enterprise, building multi-agent workflows on the Microsoft Agent Framework with Azure OpenAI and Microsoft Foundry, orchestrated over Model Context Protocol (MCP) servers under strict governance and compliance standards.",
       "Architected interactive agentic AI prototypes that showcased IBM and Neudesic's innovation pipeline and drove high-value, client-facing engagements and proofs-of-concept.",
       "Ran internal engineering experiments validating agentic patterns, tool integrations, and custom state and orchestration flows to future-proof client technology roadmaps.",
     ],
@@ -130,6 +131,27 @@ export const projects: Project[] = [
     technologies: ["Python", "Agentic AI", "Risk scoring"],
     url: "https://github.com/Aidan2111/agent-autonomy-score",
     linkLabel: "View repo",
+  },
+  {
+    name: "LLM Auction Router",
+    category: "Agent infrastructure · Python",
+    description:
+      "An auction router for LLM work: Claude Opus, Sonnet, GPT, and local models each submit a structured bid on a task, and a configurable utility function weighs quality, price, and risk-fit to pick the winner. Risk context comes from Agent Autonomy Score, and reported outcomes feed back through a SQLite track record.",
+    technologies: ["Python", "Multi-model routing", "Agentic AI", "SQLite"],
+  },
+  {
+    name: "Event-Driven Multi-Agent Architecture",
+    category: "Architecture study · Multi-agent",
+    description:
+      "A design study for running multi-agent AI systems on an event-driven service bus: agents subscribe to and emit events instead of calling each other directly, so they can be added, upgraded, or hot-swapped live without redeploying the rest of the system. Covers the event envelope, agent registry, reliability, and LLM cost on transports like Azure Service Bus and Kafka.",
+    technologies: ["Multi-agent systems", "Event-driven architecture", "Azure Service Bus", "Python"],
+  },
+  {
+    name: "Macro Oil Desk Terminal",
+    category: "Full-stack · Azure AI Foundry",
+    description:
+      "A trading-desk terminal for an oil desk — Brent/WTI dislocation z-scores, US inventory drawdown velocity, and AIS-based tanker fleet exposure by regulatory regime — with an Azure OpenAI and Microsoft Foundry-backed market-commentary panel and a real-time 3D Earth visualization. Built on Next.js and FastAPI, deployed on Azure.",
+    technologies: ["Next.js", "FastAPI", "Azure AI Foundry", "Three.js"],
   },
   {
     name: "Sentiment-Driven Quantitative Carry Trade Model",
